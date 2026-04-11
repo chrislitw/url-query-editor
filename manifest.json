@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "URL Query Editor",
+  "version": "1.0",
+  "description": "编辑当前页面的 URL query 参数",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+    }
+  },
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ],
+  "icons": {
+   
+  }
+}
