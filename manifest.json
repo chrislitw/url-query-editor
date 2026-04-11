@@ -1,11 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "URL Query Editor",
+  "name": "URL 參數編輯器",
   "version": "1.0",
-  "description": "编辑当前页面的 URL query 参数",
+  "description": "編輯當前頁面的 URL 查詢參數",
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
+      "16": "icon-16.png",
+      "48": "icon-48.png",
+      "128": "icon-128.png"
     }
   },
   "permissions": [
@@ -13,6 +16,8 @@
     "tabs"
   ],
   "icons": {
-   
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
   }
 }
