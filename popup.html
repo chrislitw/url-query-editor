@@ -9,32 +9,33 @@
 <body>
   <div class="container">
     <div class="header-section">
-      <h1>URL 參數編輯器</h1>
-    </div>
-
-    <div class="url-section">
-      <div class="url-label">
-        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path d="M3.9 12C3.9 10.29 5.29 8.9 7 8.9H11V7H7C4.24 7 2 9.24 2 12C2 14.76 4.24 17 7 17H11V15.1H7C5.29 15.1 3.9 13.71 3.9 12ZM8 13H16V11H8V13ZM17 7H13V8.9H17C18.71 8.9 20.1 10.29 20.1 12C20.1 13.71 18.71 15.1 17 15.1H13V17H17C19.76 17 22 14.76 22 12C22 9.24 19.76 7 17 7Z" fill="currentColor"/>
-        </svg>
-        目前網址
+      <div class="header-top">
+        <h1>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M3.9 12C3.9 10.29 5.29 8.9 7 8.9H11V7H7C4.24 7 2 9.24 2 12C2 14.76 4.24 17 7 17H11V15.1H7C5.29 15.1 3.9 13.71 3.9 12ZM8 13H16V11H8V13ZM17 7H13V8.9H17C18.71 8.9 20.1 10.29 20.1 12C20.1 13.71 18.71 15.1 17 15.1H13V17H17C19.76 17 22 14.76 22 12C22 9.24 19.76 7 17 7Z" fill="currentColor"/>
+          </svg>
+          URL 參數編輯器
+        </h1>
+        <span class="badge" id="paramCount">0 個參數</span>
       </div>
-      <div id="currentUrl" class="current-url"></div>
+      <div class="url-display">
+        <span id="currentUrl" class="url-text"></span>
+        <button id="copyUrl" class="btn-icon" title="複製網址">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
     <div class="params-section">
       <div class="section-header">
-        <h2>
-          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20Z" fill="currentColor"/>
-          </svg>
-          查詢參數
-        </h2>
+        <h2>查詢參數</h2>
         <button id="addParam" class="btn btn-add">
-          <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" fill="currentColor"/>
           </svg>
-          新增參數
+          新增
         </button>
       </div>
 
@@ -42,20 +43,22 @@
     </div>
 
     <div class="actions">
-      <button id="clearAll" class="btn btn-secondary">
-        <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none">
-          <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="currentColor"/>
+      <button id="clearAll" class="btn btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z" fill="currentColor"/>
         </svg>
-        清空全部
+        清空
       </button>
       <button id="refreshBtn" class="btn btn-primary">
-        <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none">
-          <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4C7.58 4 4.01 7.58 4.01 12C4.01 16.42 7.58 20 12 20C15.73 20 18.84 17.45 19.73 14H17.65C16.83 16.33 14.61 18 12 18C8.69 18 6 15.31 6 12C6 8.69 8.69 6 12 6C13.66 6 15.14 6.69 16.22 7.78L13 11H20V4L17.65 6.35Z" fill="currentColor"/>
+        套用變更
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M10 6L8.59 7.41L13.17 12L8.59 16.59L10 18L16 12L10 6Z" fill="currentColor"/>
         </svg>
-        套用並重新整理
       </button>
     </div>
   </div>
+
+  <div id="toast" class="toast"></div>
 
   <script src="popup.js"></script>
 </body>
