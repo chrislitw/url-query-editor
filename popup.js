@@ -39,6 +39,27 @@ function updateParamCount() {
   badge.textContent = `${currentParams.size} 個參數`;
 }
 
+// 根據目前參數組裝新網址
+function buildUrl() {
+  const url = new URL(currentUrl);
+  url.search = '';
+  currentParams.forEach((value, key) => {
+    if (key.trim()) {
+      url.searchParams.set(key, value);
+    }
+  });
+  return url.toString();
+}
+
+// 即時更新 URL 顯示
+function updateUrlDisplay() {
+  try {
+    document.getElementById('currentUrl').textContent = buildUrl();
+  } catch (error) {
+    // 保留原 URL 顯示，避免輸入過程中暫時無效的狀態閃爍
+  }
+}
+
 // 顯示 toast 提示
 function showToast(message) {
   const toast = document.getElementById('toast');
@@ -52,6 +73,7 @@ function renderParams() {
   const paramsList = document.getElementById('paramsList');
   paramsList.innerHTML = '';
   updateParamCount();
+  updateUrlDisplay();
 
   if (currentParams.size === 0) {
     paramsList.innerHTML = `
@@ -116,11 +138,13 @@ function createParamItem(key, value) {
       currentParams.set(newKey, val);
       e.target.dataset.originalKey = newKey;
     }
+    updateUrlDisplay();
   });
 
   valueInput.addEventListener('input', (e) => {
     const key = keyInput.dataset.originalKey;
     currentParams.set(key, e.target.value);
+    updateUrlDisplay();
   });
 
   div.appendChild(keyInput);
@@ -171,25 +195,9 @@ function setupEventListeners() {
   // 套用並重新整理
   document.getElementById('refreshBtn').addEventListener('click', async () => {
     try {
-      const url = new URL(currentUrl);
-
-      // 清空原有的查詢參數
-      url.search = '';
-
-      // 加入新的參數
-      currentParams.forEach((value, key) => {
-        if (key.trim()) {
-          url.searchParams.set(key, value);
-        }
-      });
-
-      const newUrl = url.toString();
-
-      // 更新分頁 URL
+      const newUrl = buildUrl();
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       await chrome.tabs.update(tab.id, { url: newUrl });
-
-      // 關閉彈窗
       window.close();
     } catch (error) {
       console.error('重新整理失敗:', error);

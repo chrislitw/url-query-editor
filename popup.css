@@ -6,6 +6,8 @@
 
 body {
   width: 480px;
+  height: 600px;
+  overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
   color: #1a1a2e;
   background: #f0f0f5;
@@ -18,12 +20,14 @@ body {
   flex-direction: column;
   border-radius: 0;
   overflow: hidden;
+  height: 100%;
 }
 
 /* ---- Header ---- */
 .header-section {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   padding: 16px 20px 14px;
+  flex-shrink: 0;
 }
 
 .header-top {
@@ -65,12 +69,30 @@ body {
 
 .url-text {
   flex: 1;
+  min-width: 0;
   font-size: 12px;
   font-family: 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
   color: rgba(255, 255, 255, 0.9);
   word-break: break-all;
   line-height: 1.5;
   min-height: 18px;
+  max-height: 108px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.url-text::-webkit-scrollbar {
+  width: 4px;
+}
+
+.url-text::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.url-text::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 99px;
 }
 
 .btn-icon {
@@ -100,7 +122,10 @@ body {
 /* ---- Params Section ---- */
 .params-section {
   flex: 1;
+  min-height: 0;
   padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .section-header {
@@ -119,7 +144,8 @@ body {
 }
 
 .params-list {
-  max-height: 300px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -156,6 +182,7 @@ body {
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   animation: fadeIn 0.15s ease-out;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .param-item:hover {
@@ -286,6 +313,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 /* ---- Empty State ---- */
