@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "URL Query Editor",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Edit URL query parameters of the current page",
   "action": {
     "default_popup": "popup.html",
