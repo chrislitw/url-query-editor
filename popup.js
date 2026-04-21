@@ -28,15 +28,16 @@ async function loadCurrentUrl() {
       updateParamCount();
     }
   } catch (error) {
-    console.error('獲取 URL 失敗:', error);
-    document.getElementById('currentUrl').textContent = '無法獲取當前頁面 URL';
+    console.error('Failed to load URL:', error);
+    document.getElementById('currentUrl').textContent = 'Unable to load current page URL';
   }
 }
 
 // 更新參數數量顯示
 function updateParamCount() {
   const badge = document.getElementById('paramCount');
-  badge.textContent = `${currentParams.size} 個參數`;
+  const n = currentParams.size;
+  badge.textContent = `${n} ${n === 1 ? 'param' : 'params'}`;
 }
 
 // 根據目前參數組裝新網址
@@ -83,7 +84,7 @@ function renderParams() {
             <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM16 18H8V16H16V18ZM16 14H8V12H16V14ZM13 9V3.5L18.5 9H13Z" fill="currentColor"/>
           </svg>
         </div>
-        目前沒有查詢參數<br>點擊「新增」按鈕來添加
+        No query parameters yet<br>Click "Add" to create one
       </div>`;
     return;
   }
@@ -103,7 +104,7 @@ function createParamItem(key, value) {
   keyInput.type = 'text';
   keyInput.className = 'param-key';
   keyInput.value = key;
-  keyInput.placeholder = '參數名';
+  keyInput.placeholder = 'Key';
   keyInput.dataset.originalKey = key;
 
   const separator = document.createElement('span');
@@ -114,11 +115,11 @@ function createParamItem(key, value) {
   valueInput.type = 'text';
   valueInput.className = 'param-value';
   valueInput.value = value;
-  valueInput.placeholder = '參數值';
+  valueInput.placeholder = 'Value';
 
   const removeBtn = document.createElement('button');
   removeBtn.className = 'btn-delete';
-  removeBtn.title = '刪除';
+  removeBtn.title = 'Delete';
   removeBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none">
     <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="currentColor"/>
   </svg>`;
@@ -162,7 +163,7 @@ function setupEventListeners() {
     navigator.clipboard.writeText(currentUrl).then(() => {
       const btn = document.getElementById('copyUrl');
       btn.classList.add('copied');
-      showToast('已複製網址');
+      showToast('URL copied');
       setTimeout(() => btn.classList.remove('copied'), 1500);
     });
   });
@@ -185,10 +186,10 @@ function setupEventListeners() {
 
   // 清空全部參數
   document.getElementById('clearAll').addEventListener('click', () => {
-    if (currentParams.size > 0 && confirm('確定要清空所有參數嗎？')) {
+    if (currentParams.size > 0 && confirm('Clear all parameters?')) {
       currentParams.clear();
       renderParams();
-      showToast('已清空所有參數');
+      showToast('All parameters cleared');
     }
   });
 
@@ -200,8 +201,8 @@ function setupEventListeners() {
       await chrome.tabs.update(tab.id, { url: newUrl });
       window.close();
     } catch (error) {
-      console.error('重新整理失敗:', error);
-      alert('重新整理失敗，請檢查 URL 是否有效');
+      console.error('Apply failed:', error);
+      alert('Apply failed. Please check the URL is valid.');
     }
   });
 }

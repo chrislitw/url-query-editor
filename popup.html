@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>URL 參數編輯器</title>
+  <title>URL Query Editor</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
@@ -14,13 +14,13 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
             <path d="M3.9 12C3.9 10.29 5.29 8.9 7 8.9H11V7H7C4.24 7 2 9.24 2 12C2 14.76 4.24 17 7 17H11V15.1H7C5.29 15.1 3.9 13.71 3.9 12ZM8 13H16V11H8V13ZM17 7H13V8.9H17C18.71 8.9 20.1 10.29 20.1 12C20.1 13.71 18.71 15.1 17 15.1H13V17H17C19.76 17 22 14.76 22 12C22 9.24 19.76 7 17 7Z" fill="currentColor"/>
           </svg>
-          URL 參數編輯器
+          URL Query Editor
         </h1>
-        <span class="badge" id="paramCount">0 個參數</span>
+        <span class="badge" id="paramCount">0 params</span>
       </div>
       <div class="url-display">
         <span id="currentUrl" class="url-text"></span>
-        <button id="copyUrl" class="btn-icon" title="複製網址">
+        <button id="copyUrl" class="btn-icon" title="Copy URL">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="currentColor"/>
           </svg>
@@ -30,12 +30,12 @@
 
     <div class="params-section">
       <div class="section-header">
-        <h2>查詢參數</h2>
+        <h2>Query Parameters</h2>
         <button id="addParam" class="btn btn-add">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" fill="currentColor"/>
           </svg>
-          新增
+          Add
         </button>
       </div>
 
@@ -47,10 +47,10 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
           <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z" fill="currentColor"/>
         </svg>
-        清空
+        Clear
       </button>
       <button id="refreshBtn" class="btn btn-primary">
-        套用變更
+        Apply
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
           <path d="M10 6L8.59 7.41L13.17 12L8.59 16.59L10 18L16 12L10 6Z" fill="currentColor"/>
         </svg>
