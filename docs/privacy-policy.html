@@ -5,27 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>隱私權政策 - URL 參數編輯器</title>
   <style>
+    /* 色票與 popup.css 的 :root 一致（板岩 + 青綠） */
+    :root {
+      --text: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --line: #e2e8f0;
+      --bg-field: #f1f5f9;
+      --accent: #0d9488;
+      --accent-hover: #0f766e;
+    }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
       max-width: 720px;
       margin: 0 auto;
       padding: 2rem 1rem;
       line-height: 1.8;
-      color: #333;
+      color: var(--text-secondary);
     }
-    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
-    h2 { font-size: 1.3rem; margin-top: 2rem; }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+      padding-bottom: 0.2rem;
+    }
+    h2 { font-size: 1.3rem; margin-top: 2rem; color: var(--text); }
     p { margin: 0.8rem 0; }
-    .date { color: #666; font-size: 0.9rem; }
-    .lang-switch { font-size: 0.9rem; margin-bottom: 1.5rem; }
-    .lang-switch a { color: #6366f1; text-decoration: none; }
-    .lang-switch a:hover { text-decoration: underline; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); text-decoration: underline; }
+    .date { color: var(--text-muted); font-size: 0.9rem; }
+    .lang-switch {
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--line);
+      color: var(--text-muted);
+    }
+    li code, p code {
+      background: var(--bg-field);
+      color: var(--text);
+      font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+      font-size: 0.85em;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
   <div class="lang-switch"><strong>繁體中文</strong> · <a href="privacy-policy-en.html">English</a></div>
   <h1>隱私權政策</h1>
-  <p class="date">最後更新日期：2026 年 4 月 14 日</p>
+  <p class="date">最後更新日期：2026 年 8 月 8 日</p>
 
   <h2>概述</h2>
   <p>「URL 參數編輯器」（以下簡稱「本擴充功能」）尊重並保護使用者的隱私。本隱私權政策說明本擴充功能如何處理您的資料。</p>
@@ -34,15 +65,15 @@
   <p>本擴充功能<strong>不會收集、儲存或傳輸任何個人資料或使用者資訊</strong>。</p>
 
   <h2>資料使用</h2>
-  <p>本擴充功能僅在您主動使用時讀取當前分頁的 URL，以便您編輯查詢參數。所有操作皆在您的瀏覽器本機端完成，不會將任何資料傳送至外部伺服器。</p>
+  <p>本擴充功能僅在您主動使用時讀取當前分頁的 URL，以便您編輯其通訊協定、網域、路徑與查詢參數。所有操作皆在您的瀏覽器本機端完成，不會將任何資料傳送至外部伺服器。</p>
+  <p>本擴充功能會在瀏覽器本機端記住「網域」與「路徑」區塊的收合狀態，此設定僅儲存於您的裝置，不會外傳。</p>
 
   <h2>第三方服務</h2>
   <p>本擴充功能不使用任何第三方分析工具、廣告服務或追蹤技術。</p>
 
   <h2>權限說明</h2>
   <ul>
-    <li><strong>activeTab</strong>：用於讀取及修改當前分頁的 URL 查詢參數。</li>
-    <li><strong>tabs</strong>：用於更新當前分頁的網址。</li>
+    <li><code>tabs</code>：用於讀取當前分頁的網址，並在您按下「Apply」時將分頁導向編輯後的網址。</li>
   </ul>
 
   <h2>政策變更</h2>

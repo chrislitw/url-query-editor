@@ -5,27 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Privacy Policy - URL Query Editor</title>
   <style>
+    /* Palette mirrors the :root tokens in popup.css (slate + teal) */
+    :root {
+      --text: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --line: #e2e8f0;
+      --bg-field: #f1f5f9;
+      --accent: #0d9488;
+      --accent-hover: #0f766e;
+    }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
       max-width: 720px;
       margin: 0 auto;
       padding: 2rem 1rem;
       line-height: 1.8;
-      color: #333;
+      color: var(--text-secondary);
     }
-    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
-    h2 { font-size: 1.3rem; margin-top: 2rem; }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+      padding-bottom: 0.2rem;
+    }
+    h2 { font-size: 1.3rem; margin-top: 2rem; color: var(--text); }
     p { margin: 0.8rem 0; }
-    .date { color: #666; font-size: 0.9rem; }
-    .lang-switch { font-size: 0.9rem; margin-bottom: 1.5rem; }
-    .lang-switch a { color: #6366f1; text-decoration: none; }
-    .lang-switch a:hover { text-decoration: underline; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); text-decoration: underline; }
+    .date { color: var(--text-muted); font-size: 0.9rem; }
+    .lang-switch {
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--line);
+      color: var(--text-muted);
+    }
+    li code, p code {
+      background: var(--bg-field);
+      color: var(--text);
+      font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+      font-size: 0.85em;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
   <div class="lang-switch"><a href="privacy-policy.html">繁體中文</a> · <strong>English</strong></div>
   <h1>Privacy Policy</h1>
-  <p class="date">Last updated: April 14, 2026</p>
+  <p class="date">Last updated: August 8, 2026</p>
 
   <h2>Overview</h2>
   <p>"URL Query Editor" (hereinafter referred to as "the Extension") respects and protects user privacy. This Privacy Policy explains how the Extension handles your data.</p>
@@ -34,15 +65,15 @@
   <p>The Extension <strong>does not collect, store, or transmit any personal data or user information</strong>.</p>
 
   <h2>Data Usage</h2>
-  <p>The Extension only reads the URL of the current tab when you actively use it, so that you can edit its query parameters. All operations are performed locally in your browser and no data is sent to any external server.</p>
+  <p>The Extension only reads the URL of the current tab when you actively use it, so that you can edit its protocol, domain, path, and query parameters. All operations are performed locally in your browser and no data is sent to any external server.</p>
+  <p>The Extension remembers whether the "Domain" and "Path" sections are collapsed. This preference is stored locally on your device and is never transmitted.</p>
 
   <h2>Third-Party Services</h2>
   <p>The Extension does not use any third-party analytics, advertising services, or tracking technologies.</p>
 
   <h2>Permissions</h2>
   <ul>
-    <li><strong>activeTab</strong>: Used to read and modify the URL query parameters of the current tab.</li>
-    <li><strong>tabs</strong>: Used to update the URL of the current tab.</li>
+    <li><code>tabs</code>: Used to read the URL of the current tab, and to navigate that tab to the edited URL when you press "Apply".</li>
   </ul>
 
   <h2>Policy Changes</h2>
