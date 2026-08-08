@@ -28,6 +28,55 @@
       </div>
     </div>
 
+    <div class="edit-section" id="domainSection">
+      <div class="section-header">
+        <button class="section-toggle" aria-expanded="true" aria-controls="domainBody">
+          <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none">
+            <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z" fill="currentColor"/>
+          </svg>
+          <h2>Domain</h2>
+        </button>
+        <span class="section-summary" id="domainSummary"></span>
+        <button id="resetDomain" class="btn btn-reset" title="Restore original domain">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+            <path d="M12 5V1L7 6L12 11V7C15.31 7 18 9.69 18 13C18 16.31 15.31 19 12 19C8.69 19 6 16.31 6 13H4C4 17.42 7.58 21 12 21C16.42 21 20 17.42 20 13C20 8.58 16.42 5 12 5Z" fill="currentColor"/>
+          </svg>
+          Reset
+        </button>
+      </div>
+      <div class="section-body" id="domainBody">
+        <div class="url-field" id="domainField">
+          <input id="domainProtocol" class="protocol-input" type="text" title="Protocol" placeholder="https" spellcheck="false">
+          <span class="protocol-sep">://</span>
+          <input id="domainInput" class="field-input" type="text" placeholder="example.com" spellcheck="false">
+        </div>
+      </div>
+    </div>
+
+    <div class="edit-section" id="pathSection">
+      <div class="section-header">
+        <button class="section-toggle" aria-expanded="true" aria-controls="pathBody">
+          <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none">
+            <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z" fill="currentColor"/>
+          </svg>
+          <h2>Path</h2>
+        </button>
+        <span class="section-summary" id="pathSummary"></span>
+        <button id="resetPath" class="btn btn-reset" title="Restore original path">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+            <path d="M12 5V1L7 6L12 11V7C15.31 7 18 9.69 18 13C18 16.31 15.31 19 12 19C8.69 19 6 16.31 6 13H4C4 17.42 7.58 21 12 21C16.42 21 20 17.42 20 13C20 8.58 16.42 5 12 5Z" fill="currentColor"/>
+          </svg>
+          Reset
+        </button>
+      </div>
+      <div class="section-body" id="pathBody">
+        <div class="url-field">
+          <span id="pathOrigin" class="field-prefix"></span>
+          <input id="pathInput" class="field-input" type="text" placeholder="/path" spellcheck="false">
+        </div>
+      </div>
+    </div>
+
     <div class="params-section">
       <div class="section-header">
         <h2>Query Parameters</h2>
@@ -59,6 +108,7 @@
   </div>
 
   <div id="toast" class="toast"></div>
+  <span id="protocolSizer" class="protocol-sizer" aria-hidden="true"></span>
 
   <script src="popup.js"></script>
 </body>

@@ -1,14 +1,19 @@
 # URL Query Editor 🌽
 
-A Chrome extension for easily editing URL query parameters.
+A Chrome extension for easily editing the domain, path, and query parameters of a URL.
 
 ## ✨ Features
 
+- 🌐 Switch the protocol and domain of the current page — handy for moving a URL between localhost, staging, and production
+- 🛣️ Edit the path of the current page
+- ↩️ One-click reset of the domain or path back to the original
+- 📐 Collapsible Domain / Path sections (the state is remembered between sessions)
 - 📝 Edit query parameters of the current page
 - ➕ Add new parameters
 - ✏️ Modify existing parameters
 - 🗑️ Delete unwanted parameters
 - 🧹 Clear all parameters at once
+- 👀 Live preview of the resulting URL
 - 🔄 Apply changes and reload the page
 
 ## 🚀 Installation
@@ -25,14 +30,18 @@ A Chrome extension for easily editing URL query parameters.
 ## 📖 Usage
 
 1. Click the extension icon 🌽 in the browser toolbar
-2. A popup will display the current page's URL and all query parameters
+2. A popup will display the current page's URL, its domain, its path, and all query parameters
 3. You can:
-   - Click "Add Parameter" to add a new parameter
+   - Edit the protocol (`https` → `http`) and the domain (host and port) by typing directly
+   - Paste a full URL into the domain field — the protocol and host are extracted automatically
+   - Edit the path directly; click "Reset" on either section to restore the original value
+   - Click a section title to collapse it and give the parameter list more room
+   - Click "Add" to add a new parameter
    - Edit parameter names and values directly
-   - Click "Delete" to remove a specific parameter
-   - Click "Clear All" to remove all parameters
-4. After editing, click "Apply & Reload"
-5. The page will reload with the updated URL parameters
+   - Click the ✕ next to a parameter to remove it
+   - Click "Clear" to remove all parameters
+4. After editing, click "Apply" (or press Enter)
+5. The page will reload with the updated URL
 
 ## 🛠️ Tech Stack
 
