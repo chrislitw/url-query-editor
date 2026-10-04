@@ -7,12 +7,9 @@ let originalProtocol = 'https:';
 let originalHost = '';
 let originalPath = '/';
 
-const COLLAPSE_KEY = 'collapsedSections';
-
 // 初始化
 document.addEventListener('DOMContentLoaded', async () => {
   await loadCurrentUrl();
-  setupCollapsibleSections();
   renderDomain();
   renderPath();
   renderParams();
@@ -26,9 +23,6 @@ async function loadCurrentUrl() {
     if (tab && tab.url) {
       currentUrl = tab.url;
       const url = new URL(currentUrl);
-
-      // 顯示當前 URL
-      document.getElementById('currentUrl').textContent = currentUrl;
 
       // 解析 domain 與 path
       originalProtocol = url.protocol;
@@ -48,7 +42,7 @@ async function loadCurrentUrl() {
     }
   } catch (error) {
     console.error('Failed to load URL:', error);
-    document.getElementById('currentUrl').textContent = 'Unable to load current page URL';
+    showToast('Unable to load current page URL');
   }
 }
 
@@ -130,21 +124,18 @@ function buildUrl() {
   return url.toString();
 }
 
-// 即時更新 URL 顯示與各區塊摘要
+// 即時更新網址欄的完整網址提示與驗證狀態
 function updateUrlDisplay() {
+  const field = document.getElementById('urlField');
   try {
-    document.getElementById('currentUrl').textContent = buildUrl();
+    // 欄位寬度有限，滑鼠停留時顯示含 query 的完整網址
+    field.title = buildUrl();
   } catch (error) {
-    // 保留原 URL 顯示，避免輸入過程中暫時無效的狀態閃爍
+    // 保留上一次的提示，避免輸入過程中暫時無效的狀態閃爍
   }
 
-  const origin = `${currentProtocol}//${normalizeHost(currentHost)}`;
-  document.getElementById('pathOrigin').textContent = origin;
-  document.getElementById('domainSummary').textContent = origin;
-  document.getElementById('pathSummary').textContent = normalizePath(currentPath);
-
   const isValid = isProtocolValid(currentProtocol) && isHostValid(currentHost);
-  document.getElementById('domainField').classList.toggle('is-invalid', !isValid);
+  field.classList.toggle('is-invalid', !isValid);
 }
 
 // 顯示 domain 並同步 Reset 按鈕狀態
@@ -154,7 +145,7 @@ function renderDomain() {
   resizeProtocolInput();
 
   document.getElementById('domainInput').value = currentHost;
-  updateResetDomainState();
+  updateResetState();
   updateUrlDisplay();
 }
 
@@ -169,66 +160,16 @@ function resizeProtocolInput() {
 // 顯示 path 並同步 Reset 按鈕狀態
 function renderPath() {
   document.getElementById('pathInput').value = currentPath;
-  updateResetPathState();
+  updateResetState();
   updateUrlDisplay();
 }
 
-// 只有 domain 被改過才能 Reset
-function updateResetDomainState() {
-  document.getElementById('resetDomain').disabled =
+// 只有 domain 或 path 被改過才能 Reset
+function updateResetState() {
+  document.getElementById('resetUrl').disabled =
     normalizeHost(currentHost) === normalizeHost(originalHost) &&
-    currentProtocol === originalProtocol;
-}
-
-// 只有 path 被改過才能 Reset
-function updateResetPathState() {
-  document.getElementById('resetPath').disabled =
+    currentProtocol === originalProtocol &&
     normalizePath(currentPath) === normalizePath(originalPath);
-}
-
-// ---- 區塊收合 ----
-
-function loadCollapsedSections() {
-  try {
-    return new Set(JSON.parse(localStorage.getItem(COLLAPSE_KEY)) || []);
-  } catch (error) {
-    return new Set();
-  }
-}
-
-function saveCollapsedSections(collapsed) {
-  try {
-    localStorage.setItem(COLLAPSE_KEY, JSON.stringify([...collapsed]));
-  } catch (error) {
-    // 無法寫入時僅影響下次開啟的預設狀態，不中斷操作
-  }
-}
-
-function setupCollapsibleSections() {
-  const collapsed = loadCollapsedSections();
-
-  document.querySelectorAll('.edit-section').forEach((section) => {
-    const toggle = section.querySelector('.section-toggle');
-
-    const apply = (isCollapsed) => {
-      section.classList.toggle('collapsed', isCollapsed);
-      toggle.setAttribute('aria-expanded', String(!isCollapsed));
-    };
-
-    apply(collapsed.has(section.id));
-
-    toggle.addEventListener('click', () => {
-      const isCollapsed = !section.classList.contains('collapsed');
-      apply(isCollapsed);
-
-      if (isCollapsed) {
-        collapsed.add(section.id);
-      } else {
-        collapsed.delete(section.id);
-      }
-      saveCollapsedSections(collapsed);
-    });
-  });
 }
 
 // 顯示 toast 提示
@@ -333,7 +274,7 @@ function setupEventListeners() {
   protocolInput.addEventListener('input', (e) => {
     currentProtocol = normalizeProtocol(e.target.value);
     resizeProtocolInput();
-    updateResetDomainState();
+    updateResetState();
     updateUrlDisplay();
   });
 
@@ -359,7 +300,7 @@ function setupEventListeners() {
     }
 
     currentHost = typed;
-    updateResetDomainState();
+    updateResetState();
     updateUrlDisplay();
   });
 
@@ -371,19 +312,11 @@ function setupEventListeners() {
     }
   });
 
-  // 還原原始 domain
-  document.getElementById('resetDomain').addEventListener('click', () => {
-    currentProtocol = originalProtocol;
-    currentHost = originalHost;
-    renderDomain();
-    showToast('Domain restored');
-  });
-
   // 編輯 path
   const pathInput = document.getElementById('pathInput');
   pathInput.addEventListener('input', (e) => {
     currentPath = e.target.value;
-    updateResetPathState();
+    updateResetState();
     updateUrlDisplay();
   });
 
@@ -393,11 +326,14 @@ function setupEventListeners() {
     renderPath();
   });
 
-  // 還原原始 path
-  document.getElementById('resetPath').addEventListener('click', () => {
+  // 還原原始 domain 與 path
+  document.getElementById('resetUrl').addEventListener('click', () => {
+    currentProtocol = originalProtocol;
+    currentHost = originalHost;
     currentPath = originalPath;
+    renderDomain();
     renderPath();
-    showToast('Path restored');
+    showToast('URL restored');
   });
 
   // 複製網址

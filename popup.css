@@ -95,42 +95,11 @@ body {
   border-radius: 4px;
 }
 
-.url-display {
+/* ---- Address bar：protocol、domain、path 合併成一個欄位 ---- */
+.address-bar {
   display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  background: var(--header-field);
-  border: 1px solid var(--line-dark);
-  border-radius: var(--radius);
-  padding: 7px 8px;
-}
-
-.url-text {
-  flex: 1;
-  min-width: 0;
-  font-size: 12px;
-  font-family: var(--mono);
-  color: var(--text-on-dark);
-  word-break: break-all;
-  line-height: 1.5;
-  min-height: 18px;
-  max-height: 90px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--line-dark) transparent;
-}
-
-.url-text::-webkit-scrollbar {
-  width: 4px;
-}
-
-.url-text::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.url-text::-webkit-scrollbar-thumb {
-  background: #475569;
-  border-radius: 99px;
+  align-items: center;
+  gap: 2px;
 }
 
 .btn-icon {
@@ -150,6 +119,12 @@ body {
 .btn-icon:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #f8fafc;
+}
+
+.btn-icon:disabled {
+  color: var(--line-dark);
+  background: transparent;
+  cursor: default;
 }
 
 .btn-icon.copied {
@@ -173,84 +148,27 @@ body {
   letter-spacing: 0.6px;
 }
 
-/* ---- Domain / Path Sections ---- */
-.edit-section {
-  padding: 14px 16px 0;
-  flex-shrink: 0;
-}
-
-.section-toggle {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: inherit;
-  font-family: inherit;
-  flex-shrink: 0;
-}
-
-.section-toggle:hover h2 {
-  color: var(--text);
-}
-
-.chevron {
-  color: var(--text-faint);
-  transform: rotate(90deg);
-  transition: transform 0.12s ease;
-  flex-shrink: 0;
-}
-
-.edit-section.collapsed .chevron {
-  transform: rotate(0deg);
-}
-
-.section-summary {
-  display: none;
-  flex: 1;
-  min-width: 0;
-  font-size: 11px;
-  font-family: var(--mono);
-  color: var(--text-faint);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: right;
-}
-
-.edit-section.collapsed .section-summary {
-  display: block;
-}
-
-.edit-section.collapsed .section-body,
-.edit-section.collapsed .btn-reset {
-  display: none;
-}
-
-.edit-section.collapsed .section-header {
-  margin-bottom: 0;
-}
-
 /* ---- Input fields ---- */
 .url-field {
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   border-radius: var(--radius);
-  background: var(--bg);
-  border: 1px solid var(--line);
+  background: var(--header-field);
+  border: 1px solid var(--line-dark);
   transition: border-color 0.12s ease, box-shadow 0.12s ease;
   overflow: hidden;
+  margin-right: 4px;
 }
 
 .url-field:hover {
-  border-color: var(--line-strong);
+  border-color: #64748b;
 }
 
 .url-field:focus-within {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent-ring);
+  border-color: var(--accent-on-dark);
+  box-shadow: 0 0 0 2px rgba(94, 234, 212, 0.18);
 }
 
 .url-field.is-invalid {
@@ -258,24 +176,11 @@ body {
 }
 
 .url-field.is-invalid:focus-within {
-  box-shadow: 0 0 0 2px var(--danger-ring);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
 }
 
-.url-field.is-invalid .field-input {
-  color: var(--danger);
-}
-
-.field-prefix {
-  padding: 8px 0 8px 10px;
-  font-size: 12px;
-  font-family: var(--mono);
-  color: var(--text-faint);
-  white-space: nowrap;
-  max-width: 45%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  user-select: none;
-  flex-shrink: 0;
+.url-field.is-invalid .host-input {
+  color: #fca5a5;
 }
 
 /* 協定欄位，寬度由 JS 依內容調整 */
@@ -288,22 +193,22 @@ body {
   padding: 8px 0 8px 10px;
   font-size: 12px;
   font-family: var(--mono);
-  color: var(--text-muted);
+  color: var(--text-on-dark-muted);
   flex-shrink: 0;
 }
 
 .protocol-input:focus {
-  color: var(--text);
+  color: #f8fafc;
 }
 
 .protocol-input::placeholder {
-  color: var(--text-faint);
+  color: var(--line-dark);
 }
 
 .protocol-sep {
   font-size: 12px;
   font-family: var(--mono);
-  color: var(--text-faint);
+  color: var(--text-on-dark-muted);
   user-select: none;
   flex-shrink: 0;
 }
@@ -320,20 +225,30 @@ body {
 }
 
 .field-input {
-  flex: 1;
   min-width: 0;
-  padding: 8px 10px 8px 2px;
+  padding: 7px 8px 7px 2px;
   border: none;
   font-size: 12px;
   font-family: var(--mono);
   background: transparent;
-  color: var(--text);
+  color: var(--text-on-dark);
   outline: none;
 }
 
 .field-input::placeholder {
-  color: var(--text-faint);
+  color: var(--line-dark);
   font-family: var(--sans);
+}
+
+/* path 通常比 domain 長，分到較多寬度；兩者之間用細線分隔 */
+.host-input {
+  flex: 1;
+}
+
+.path-input {
+  flex: 1.4;
+  padding-left: 8px;
+  border-left: 1px solid var(--line-dark);
 }
 
 /* ---- Params Section ---- */
@@ -472,24 +387,6 @@ body {
 .btn-add:hover {
   background: var(--bg-field);
   border-color: var(--line-strong);
-}
-
-/* Quiet text button — "Reset" */
-.btn-reset {
-  background: transparent;
-  color: var(--text-muted);
-  padding: 4px 8px;
-}
-
-.btn-reset:hover {
-  background: var(--bg-field);
-  color: var(--text);
-}
-
-.btn-reset:disabled {
-  color: var(--line-strong);
-  cursor: default;
-  background: transparent;
 }
 
 /* Quiet destructive — "Clear" */
