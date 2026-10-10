@@ -20,12 +20,9 @@
       </div>
       <div class="address-bar">
         <div class="url-field" id="urlField">
-          <input id="domainProtocol" class="protocol-input" type="text" title="Protocol" placeholder="https" spellcheck="false">
-          <span class="protocol-sep">://</span>
-          <input id="domainInput" class="field-input host-input" type="text" title="Domain" placeholder="example.com" spellcheck="false">
-          <input id="pathInput" class="field-input path-input" type="text" title="Path" placeholder="/path" spellcheck="false">
+          <textarea id="baseInput" class="field-input" rows="1" placeholder="https://example.com/path" spellcheck="false"></textarea>
         </div>
-        <button id="resetUrl" class="btn-icon" title="Restore original domain and path">
+        <button id="resetUrl" class="btn-icon" title="Restore original URL">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <path d="M12 5V1L7 6L12 11V7C15.31 7 18 9.69 18 13C18 16.31 15.31 19 12 19C8.69 19 6 16.31 6 13H4C4 17.42 7.58 21 12 21C16.42 21 20 17.42 20 13C20 8.58 16.42 5 12 5Z" fill="currentColor"/>
           </svg>
@@ -69,7 +66,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <span id="protocolSizer" class="protocol-sizer" aria-hidden="true"></span>
 
   <script src="popup.js"></script>
 </body>

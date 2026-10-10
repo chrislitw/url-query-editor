@@ -1,17 +1,14 @@
 let currentUrl = '';
 let currentParams = new Map();
-let currentProtocol = 'https:';
-let currentHost = '';
-let currentPath = '/';
-let originalProtocol = 'https:';
-let originalHost = '';
-let originalPath = '/';
+// 網址欄只放 query 之前的部分（協定、網域、路徑），query 由參數列表管理
+let currentBase = '';
+let originalBase = '';
+let originalHash = '';
 
 // 初始化
 document.addEventListener('DOMContentLoaded', async () => {
   await loadCurrentUrl();
-  renderDomain();
-  renderPath();
+  renderBase();
   renderParams();
   setupEventListeners();
 });
@@ -24,13 +21,10 @@ async function loadCurrentUrl() {
       currentUrl = tab.url;
       const url = new URL(currentUrl);
 
-      // 解析 domain 與 path
-      originalProtocol = url.protocol;
-      originalHost = url.host;
-      originalPath = url.pathname;
-      currentProtocol = originalProtocol;
-      currentHost = originalHost;
-      currentPath = originalPath;
+      // 解析 query 之前的網址與 hash
+      originalBase = stripQuery(url);
+      originalHash = url.hash;
+      currentBase = originalBase;
 
       // 解析 query 參數
       currentParams.clear();
@@ -53,74 +47,83 @@ function updateParamCount() {
   badge.textContent = `${n} ${n === 1 ? 'param' : 'params'}`;
 }
 
-// 正規化協定：統一成小寫、結尾帶一個冒號
-function normalizeProtocol(protocol) {
-  return `${protocol.trim().toLowerCase().replace(/[:/]+$/, '')}:`;
+// 去掉 query 與 hash，只留協定、網域與路徑
+function stripQuery(url) {
+  const copy = new URL(url);
+  copy.search = '';
+  copy.hash = '';
+  return copy.href;
 }
 
-// 協定只允許字母開頭的合法 scheme
-function isProtocolValid(protocol) {
-  return /^[a-z][a-z0-9+.-]*:$/.test(normalizeProtocol(protocol));
+// 網址欄接受的協定；其他協定（例如打錯的 htps:）一律視為不合法
+const KNOWN_PROTOCOLS = [
+  'http:', 'https:', 'ws:', 'wss:', 'ftp:', 'file:',
+  'chrome:', 'chrome-extension:', 'edge:', 'about:', 'data:', 'view-source:',
+];
+
+// 需要 host 的協定，而且必須寫成 scheme://host 的形式
+const HOST_REQUIRED = ['http:', 'https:', 'ws:', 'wss:', 'ftp:'];
+
+// Chrome 的 URL 解析很寬鬆（abc 會變成 https://abc/、空白會被編碼成 %20），
+// 所以另外要求 host 必須是 localhost、IP，或帶有英文頂級網域的網域名稱
+// （中文網域會先被轉成 xn-- 開頭的 punycode）
+const LABEL = '[a-z0-9_](?:[a-z0-9_-]*[a-z0-9_])?';
+const DOMAIN_PATTERN = new RegExp(`^(?:${LABEL}\\.)+(?:[a-z]{2,}|xn--[a-z0-9-]+)\\.?$`, 'i');
+const IPV4_PATTERN = /^\d{1,3}(\.\d{1,3}){3}$/;
+const IPV6_PATTERN = /^\[[0-9a-f:.]+\]$/i;
+
+function isHostValid(hostname) {
+  return hostname === 'localhost'
+    || DOMAIN_PATTERN.test(hostname)
+    || IPV4_PATTERN.test(hostname)
+    || IPV6_PATTERN.test(hostname);
 }
 
-// 正規化 host：去掉協定前綴與 path 之後的部分
-function normalizeHost(host) {
-  return host
-    .trim()
-    .replace(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//, '')
-    .replace(/[/?#].*$/, '');
-}
+// 解析網址欄；沒打協定時沿用原本的協定，不合法時回傳 null
+function parseBase(text) {
+  const trimmed = text.trim();
+  if (!trimmed) return null;
 
-// 正規化 path：確保開頭有斜線
-function normalizePath(path) {
-  const trimmed = path.trim();
-  if (!trimmed) return '/';
-  return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
-}
+  const scheme = trimmed.match(/^([a-z][a-z0-9+.-]*):/i);
+  // localhost:3000、192.168.1.10:8080 這類 host:port 不是協定
+  const isHostPort = /^[^/:?#]+:\d+([/?#]|$)/.test(trimmed);
 
-// 檢查 host 是否能被瀏覽器接受（設定失敗時 URL 會沿用原本的 host）
-const HOST_PROBE = 'probe.invalid';
-
-function isHostValid(host) {
-  const normalized = normalizeHost(host);
-  // file:// 這類網址本來就沒有 host，沒換過協定時留空是合法的
-  if (!normalized) return currentProtocol === originalProtocol && originalHost === '';
-  if (!isProtocolValid(currentProtocol)) return false;
-  try {
-    // 先塞一個必定合法的 host，之後只要值有變就代表新 host 被接受
-    // （直接比對輸入值會誤判 example.com:443 這種預設埠會被省略的情況）
-    const url = new URL(`${currentProtocol}//${HOST_PROBE}`);
-    url.host = normalized;
-    return url.host !== HOST_PROBE;
-  } catch (error) {
-    return false;
+  let candidate = trimmed;
+  if (!scheme || isHostPort) {
+    const protocol = originalBase ? new URL(originalBase).protocol : 'https:';
+    candidate = `${protocol}//${trimmed}`;
   }
+
+  let url;
+  try {
+    url = new URL(candidate);
+  } catch (error) {
+    return null;
+  }
+
+  if (!KNOWN_PROTOCOLS.includes(url.protocol)) return null;
+
+  if (HOST_REQUIRED.includes(url.protocol)) {
+    // https:/example.com 這種少一條斜線的寫法，Chrome 會自動補正，這裡視為打錯
+    if (!candidate.toLowerCase().startsWith(`${url.protocol}//`)) return null;
+    if (!isHostValid(url.hostname)) return null;
+  }
+
+  return url;
 }
 
-// 根據目前 domain、path 與參數組裝新網址
+// 根據網址欄與參數組裝新網址
 function buildUrl() {
-  const url = new URL(currentUrl);
-  url.protocol = currentProtocol;
-  url.host = normalizeHost(currentHost);
-  url.pathname = normalizePath(currentPath);
+  const url = parseBase(currentBase);
+  if (!url) throw new Error('Invalid URL');
+
   url.search = '';
   currentParams.forEach((value, key) => {
     if (key.trim()) {
       url.searchParams.set(key, value);
     }
   });
-
-  // http/https 這類特殊協定與 chrome:、file: 之間不能直接互換，
-  // URL 會忽略指派，這時改用字串重新組裝
-  if (url.protocol !== currentProtocol) {
-    const rebuilt = `${currentProtocol}//${normalizeHost(currentHost)}${normalizePath(currentPath)}${url.search}`;
-    try {
-      return new URL(rebuilt).toString();
-    } catch (error) {
-      return url.toString();
-    }
-  }
-
+  url.hash = originalHash;
   return url.toString();
 }
 
@@ -128,48 +131,38 @@ function buildUrl() {
 function updateUrlDisplay() {
   const field = document.getElementById('urlField');
   try {
-    // 欄位寬度有限，滑鼠停留時顯示含 query 的完整網址
+    // 滑鼠停留時顯示含 query 的完整網址
     field.title = buildUrl();
   } catch (error) {
     // 保留上一次的提示，避免輸入過程中暫時無效的狀態閃爍
   }
 
-  const isValid = isProtocolValid(currentProtocol) && isHostValid(currentHost);
+  // 網址不合法時紅框，並停用 Apply 與複製
+  const isValid = Boolean(parseBase(currentBase));
   field.classList.toggle('is-invalid', !isValid);
+  document.getElementById('refreshBtn').disabled = !isValid;
+  document.getElementById('copyUrl').disabled = !isValid;
 }
 
-// 顯示 domain 並同步 Reset 按鈕狀態
-function renderDomain() {
-  const protocolInput = document.getElementById('domainProtocol');
-  protocolInput.value = currentProtocol.replace(/:$/, '');
-  resizeProtocolInput();
-
-  document.getElementById('domainInput').value = currentHost;
+// 顯示網址欄並同步 Reset 按鈕狀態
+function renderBase() {
+  document.getElementById('baseInput').value = currentBase;
+  resizeBaseInput();
   updateResetState();
   updateUrlDisplay();
 }
 
-// 協定欄位寬度跟著內容走，用離屏元素量實際像素寬（不依賴字型的 ch 單位）
-function resizeProtocolInput() {
-  const input = document.getElementById('domainProtocol');
-  const sizer = document.getElementById('protocolSizer');
-  sizer.textContent = input.value || input.placeholder;
-  input.style.width = `${Math.min(Math.max(sizer.offsetWidth, 24), 96) + 1}px`;
+// 網址欄依內容長高，最多兩行（上限寫在 CSS 的 max-height），超過就在欄位內捲動
+function resizeBaseInput() {
+  const input = document.getElementById('baseInput');
+  input.style.height = 'auto';
+  input.style.height = `${input.scrollHeight}px`;
 }
 
-// 顯示 path 並同步 Reset 按鈕狀態
-function renderPath() {
-  document.getElementById('pathInput').value = currentPath;
-  updateResetState();
-  updateUrlDisplay();
-}
-
-// 只有 domain 或 path 被改過才能 Reset
+// 只有網址被改過才能 Reset
 function updateResetState() {
-  document.getElementById('resetUrl').disabled =
-    normalizeHost(currentHost) === normalizeHost(originalHost) &&
-    currentProtocol === originalProtocol &&
-    normalizePath(currentPath) === normalizePath(originalPath);
+  const parsed = parseBase(currentBase);
+  document.getElementById('resetUrl').disabled = Boolean(parsed) && parsed.href === originalBase;
 }
 
 // 顯示 toast 提示
@@ -269,70 +262,46 @@ function createParamItem(key, value) {
 
 // 設定事件監聽器
 function setupEventListeners() {
-  // 編輯協定
-  const protocolInput = document.getElementById('domainProtocol');
-  protocolInput.addEventListener('input', (e) => {
-    currentProtocol = normalizeProtocol(e.target.value);
-    resizeProtocolInput();
+  // 編輯網址
+  const baseInput = document.getElementById('baseInput');
+  baseInput.addEventListener('input', () => {
+    // 網址不會有換行，貼上的換行一律去掉
+    const text = baseInput.value.replace(/[\r\n]+/g, '');
+
+    // 貼上含 query 的完整網址時，把 query 拆進參數列表
+    if (/[?#]/.test(text)) {
+      const parsed = parseBase(text);
+      if (parsed) {
+        currentParams.clear();
+        parsed.searchParams.forEach((value, key) => currentParams.set(key, value));
+        originalHash = parsed.hash;
+        currentBase = stripQuery(parsed);
+        renderBase();
+        renderParams();
+        return;
+      }
+    }
+
+    currentBase = text;
+    if (baseInput.value !== text) baseInput.value = text;
+    resizeBaseInput();
     updateResetState();
     updateUrlDisplay();
   });
 
-  // 離開輸入框時把顯示值正規化（小寫、去掉多打的冒號與斜線）
-  protocolInput.addEventListener('blur', () => {
-    if (isProtocolValid(currentProtocol)) {
-      renderDomain();
+  // 離開輸入框時把網址正規化（補上協定、網域轉小寫等）
+  baseInput.addEventListener('blur', () => {
+    const parsed = parseBase(currentBase);
+    if (parsed) {
+      currentBase = parsed.href;
+      renderBase();
     }
   });
 
-  // 編輯 domain
-  const domainInput = document.getElementById('domainInput');
-  domainInput.addEventListener('input', (e) => {
-    const typed = e.target.value;
-    const protocolMatch = typed.match(/^([a-zA-Z][a-zA-Z0-9+.-]*:)\/\//);
-
-    // 貼上完整網址時，把協定拉到協定欄位、host 欄位只留 host
-    if (protocolMatch) {
-      currentProtocol = normalizeProtocol(protocolMatch[1]);
-      currentHost = normalizeHost(typed);
-      renderDomain();
-      return;
-    }
-
-    currentHost = typed;
-    updateResetState();
-    updateUrlDisplay();
-  });
-
-  // 離開輸入框時清掉多餘的路徑片段
-  domainInput.addEventListener('blur', () => {
-    if (isHostValid(currentHost)) {
-      currentHost = normalizeHost(currentHost);
-      renderDomain();
-    }
-  });
-
-  // 編輯 path
-  const pathInput = document.getElementById('pathInput');
-  pathInput.addEventListener('input', (e) => {
-    currentPath = e.target.value;
-    updateResetState();
-    updateUrlDisplay();
-  });
-
-  // 離開輸入框時補上開頭的斜線
-  pathInput.addEventListener('blur', () => {
-    currentPath = normalizePath(currentPath);
-    renderPath();
-  });
-
-  // 還原原始 domain 與 path
+  // 還原原始網址
   document.getElementById('resetUrl').addEventListener('click', () => {
-    currentProtocol = originalProtocol;
-    currentHost = originalHost;
-    currentPath = originalPath;
-    renderDomain();
-    renderPath();
+    currentBase = originalBase;
+    renderBase();
     showToast('URL restored');
   });
 
@@ -374,9 +343,10 @@ function setupEventListeners() {
   // 套用並重新整理
   document.getElementById('refreshBtn').addEventListener('click', applyUrl);
 
-  // 在輸入框按 Enter 直接套用
+  // 在輸入框按 Enter 直接套用（網址欄是 textarea，要擋掉換行；輸入法選字時不套用）
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+    if (e.key === 'Enter' && !e.isComposing && ['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+      e.preventDefault();
       applyUrl();
     }
   });
@@ -384,13 +354,8 @@ function setupEventListeners() {
 
 // 套用新網址到當前分頁
 async function applyUrl() {
-  if (!isProtocolValid(currentProtocol)) {
-    showToast('Invalid protocol');
-    return;
-  }
-
-  if (!isHostValid(currentHost)) {
-    showToast('Invalid domain');
+  if (!parseBase(currentBase)) {
+    showToast('Invalid URL');
     return;
   }
 

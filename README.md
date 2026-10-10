@@ -4,10 +4,10 @@ A Chrome extension for easily editing the domain, path, and query parameters of 
 
 ## ✨ Features
 
-- 🌐 Switch the protocol and domain of the current page — handy for moving a URL between localhost, staging, and production
-- 🛣️ Edit the path of the current page
-- ↩️ One-click reset of the domain and path back to the original
-- 📐 Protocol, domain, and path share one compact address bar, leaving more room for query parameters
+- 🌐 Edit the protocol, domain, and path of the current page in one address bar — handy for moving a URL between localhost, staging, and production
+- 📋 Paste a full URL and its query string is split into the parameter list automatically
+- ↩️ One-click reset of the address back to the original
+- 📐 The address bar wraps to at most two lines, leaving more room for query parameters
 - 📝 Edit query parameters of the current page
 - ➕ Add new parameters
 - ✏️ Modify existing parameters
@@ -30,11 +30,11 @@ A Chrome extension for easily editing the domain, path, and query parameters of 
 ## 📖 Usage
 
 1. Click the extension icon 🌽 in the browser toolbar
-2. A popup will display an editable address bar (protocol, domain, path) and all query parameters
+2. A popup will display an editable address bar (everything before the `?`) and all query parameters
 3. You can:
-   - Edit the protocol (`https` → `http`) and the domain (host and port) by typing directly
-   - Paste a full URL into the domain field — the protocol and host are extracted automatically
-   - Edit the path directly; click the reset icon next to the address bar to restore the original domain and path
+   - Edit the address directly, for example `https://example.com/a` → `http://localhost:3000/a`; if you leave out the protocol, the page's original one is used
+   - Paste a full URL into the address bar — its query parameters are moved into the parameter list
+   - The address bar turns red when the URL is invalid; click the reset icon next to it to restore the original address
    - Hover over the address bar to see the full URL, or click the copy icon to copy it
    - Click "Add" to add a new parameter
    - Edit parameter names and values directly

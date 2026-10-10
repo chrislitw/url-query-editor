@@ -95,7 +95,7 @@ body {
   border-radius: 4px;
 }
 
-/* ---- Address bar：protocol、domain、path 合併成一個欄位 ---- */
+/* ---- Address bar：query 之前的網址合併成一個欄位 ---- */
 .address-bar {
   display: flex;
   align-items: center;
@@ -171,84 +171,44 @@ body {
   box-shadow: 0 0 0 2px rgba(94, 234, 212, 0.18);
 }
 
-.url-field.is-invalid {
-  border-color: var(--danger-border);
-}
-
+/* 不合法時一律顯示紅框，不論是否在輸入中 */
+.url-field.is-invalid,
+.url-field.is-invalid:hover,
 .url-field.is-invalid:focus-within {
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
+  border-color: var(--danger-border);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
 }
 
-.url-field.is-invalid .host-input {
+.url-field.is-invalid .field-input {
   color: #fca5a5;
 }
 
-/* 協定欄位，寬度由 JS 依內容調整 */
-.protocol-input {
-  /* 讓 JS 設定的 ch 寬度只算文字，不含左內距 */
-  box-sizing: content-box;
-  border: none;
-  outline: none;
-  background: transparent;
-  padding: 8px 0 8px 10px;
-  font-size: 12px;
-  font-family: var(--mono);
-  color: var(--text-on-dark-muted);
-  flex-shrink: 0;
-}
-
-.protocol-input:focus {
-  color: #f8fafc;
-}
-
-.protocol-input::placeholder {
-  color: var(--line-dark);
-}
-
-.protocol-sep {
-  font-size: 12px;
-  font-family: var(--mono);
-  color: var(--text-on-dark-muted);
-  user-select: none;
-  flex-shrink: 0;
-}
-
-/* 離屏量測用，字型設定必須與 .protocol-input 一致 */
-.protocol-sizer {
-  position: absolute;
-  top: -9999px;
-  left: -9999px;
-  visibility: hidden;
-  white-space: pre;
-  font-size: 12px;
-  font-family: var(--mono);
-}
-
+/* 網址欄：自動長高，最多兩行，超過就在欄位內捲動 */
 .field-input {
+  flex: 1;
   min-width: 0;
-  padding: 7px 8px 7px 2px;
+  display: block;
+  /* 上下留白用 margin 而非 padding，捲動時第三行才不會從內距露出來 */
+  margin: 7px 0;
+  padding: 0 8px;
   border: none;
+  resize: none;
   font-size: 12px;
   font-family: var(--mono);
+  line-height: 18px;
+  max-height: calc(18px * 2);
+  overflow-y: auto;
+  word-break: break-all;
   background: transparent;
   color: var(--text-on-dark);
   outline: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-dark) transparent;
 }
 
 .field-input::placeholder {
   color: var(--line-dark);
   font-family: var(--sans);
-}
-
-/* path 通常比 domain 長，分到較多寬度；兩者之間用細線分隔 */
-.host-input {
-  flex: 1;
-}
-
-.path-input {
-  flex: 1.4;
-  padding-left: 8px;
-  border-left: 1px solid var(--line-dark);
 }
 
 /* ---- Params Section ---- */
@@ -413,6 +373,11 @@ body {
 
 .btn-primary:hover {
   background: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+  background: var(--line-strong);
+  cursor: not-allowed;
 }
 
 /* ---- Actions Bar ---- */
