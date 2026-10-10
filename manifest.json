@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "URL Query Editor",
-  "version": "1.4",
+  "version": "1.5",
   "description": "Edit the domain, path, and query parameters of the current page URL",
   "action": {
     "default_popup": "popup.html",
